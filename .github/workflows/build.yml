@@ -10,7 +10,11 @@ on:
 jobs:
   build:
     # Важно: используем Windows, так как в твоем коде есть <windows.h>
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     # 1. Скачиваем код репозитория
