@@ -1,27 +1,32 @@
-name: Multi-OS Build
+name: Build and Test
 
-# Сборка запускается на каждый push (коммит) в любую ветку
-on: [push]
+# Триггеры: запускать при пуше в ветку main или master
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
 
 jobs:
   build:
-    # Матрица стратегий позволяет запустить один и тот же код на разных ОС
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-
-    runs-on: ${{ matrix.os }}
+    # Важно: используем Windows, так как в твоем коде есть <windows.h>
+    runs-on: windows-latest
 
     steps:
-      # 1. Копируем код репозитория на виртуальную машину
-      - name: Checkout code
-        uses: actions/checkout@v4
+    # 1. Скачиваем код репозитория
+    - uses: actions/checkout@v3
 
-      # 2. Настраиваем компилятор (для Windows по умолчанию MSVC, для Linux - GCC)
-      # Если вы используете CMake, шаги ниже будут универсальными
-      
-      - name: Configure CMake
-        run: cmake -S . -B build
+    # 2. Настраиваем CMake (генерируем файлы сборки)
+    - name: Configure CMake
+      run: cmake -S . -B build
 
-      - name: Build Project
-        run: cmake --build build --config Release
+    # 3. Компилируем проект (и программу, и тесты)
+    - name: Build
+      run: cmake --build build --config Release
+
+    # 4. Запускаем тесты
+    # ctest — это утилита CMake для запуска тестов
+    # -C Release указывает, какую конфигурацию запускать
+    # --output-on-failure покажет детали, если тест упадет
+    - name: Run Tests
+      run: cd build && ctest -C Release --output-on-failure
