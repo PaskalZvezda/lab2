@@ -1,5 +1,6 @@
-name: Multi-OS Build and Test
+name: Build and Test
 
+# Триггеры: запускать при пуше в ветку main или master
 on:
   push:
     branches: [ "main", "master" ]
@@ -8,26 +9,24 @@ on:
 
 jobs:
   build:
-    # Матрица стратегий для запуска на разных ОС
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        build_type: [Release]
-
-    runs-on: ${{ matrix.os }}
+    # Важно: используем Windows, так как в твоем коде есть <windows.h>
+    runs-on: windows-latest
 
     steps:
+    # 1. Скачиваем код репозитория
     - uses: actions/checkout@v3
 
-    # Для Ubuntu нужно убедиться, что установлен компилятор (обычно он есть)
+    # 2. Настраиваем CMake (генерируем файлы сборки)
     - name: Configure CMake
-      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+      run: cmake -S . -B build
 
+    # 3. Компилируем проект (и программу, и тесты)
     - name: Build
-      run: cmake --build build --config ${{ matrix.build_type }}
+      run: cmake --build build --config Release
 
+    # 4. Запускаем тесты
+    # ctest — это утилита CMake для запуска тестов
+    # -C Release указывает, какую конфигурацию запускать
+    # --output-on-failure покажет детали, если тест упадет
     - name: Run Tests
-      shell: bash # Используем bash как универсальную оболочку для ctest
-      run: |
-        cd build
-        ctest -C ${{ matrix.build_type }} --output-on-failure
+      run: cd build && ctest -C Release --output-on-failure
