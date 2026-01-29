@@ -9,7 +9,7 @@
 #include <windows.h>
 #endif
 
-void print_ip(const std::vector<int>& ip) {
+void print_ip(const std::vector<int>& ip) { // вывод ответа
     for (size_t i = 0; i < ip.size(); ++i) {
         std::cout << ip[i] << (i == ip.size() - 1 ? "" : ".");
     }
@@ -18,7 +18,7 @@ void print_ip(const std::vector<int>& ip) {
 
 int main()
 {
-    #ifdef _WIN32
+    #ifdef _WIN32       //чтобы сборка работала
         SetConsoleCP(65001);
         SetConsoleOutputCP(65001);
     #endif
@@ -26,15 +26,10 @@ int main()
     std::vector<std::vector<int>> ip_pool;
     std::string line;
 
-    // 2. Читаем данные из файла построчно
-    while (std::getline(file, line)) {
+    while (std::getline(file, line)) {  // читаем файл и парсим строчки
         if (line.empty()) continue;
-
-        // Разделяем по табуляции и берем только первый столбец (IP)
         std::vector<std::string> v = split(line, '\t');
         if (v.empty()) continue;
-
-        // Разделяем IP по точкам и переводим в числа
         std::vector<std::string> parts = split(v.at(0), '.');
         if (parts.size() == 4) {
             std::vector<int> ip_numeric;
@@ -62,7 +57,7 @@ int main()
 
     std::cout << std::endl << "\nФильтр по всем байтам (46) :\n\n";
     for (const auto& ip : ip_pool) {
-        if (std::any_of(ip.begin(), ip.end(), [](int part){ return part == 46; })) {
+        if (ip[0] == 46 || ip[1] == 46 || ip[2] == 46 || ip[3] == 46) {
             print_ip(ip);
         }
     }
