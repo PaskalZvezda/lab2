@@ -1,11 +1,9 @@
 name: Multi-OS Build
 
-# Сборка запускается на каждый push (коммит) в любую ветку
 on: [push]
 
 jobs:
   build:
-    # Матрица стратегий позволяет запустить один и тот же код на разных ОС
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -13,15 +11,21 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      # 1. Копируем код репозитория на виртуальную машину
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Настраиваем компилятор (для Windows по умолчанию MSVC, для Linux - GCC)
-      # Если вы используете CMake, шаги ниже будут универсальными
-      
+      - name: Install Google Test (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtest-dev
+
       - name: Configure CMake
-        run: cmake -S . -B build
+        run: cmake -S . -B build -DBUILD_TESTING=ON
 
       - name: Build Project
         run: cmake --build build --config Release
+
+      - name: Run Tests
+        working-directory: build
+        run: ctest -C Release --output-on-failure

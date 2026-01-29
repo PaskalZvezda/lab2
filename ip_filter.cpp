@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
 #include <fstream> 
 
 std::vector<std::string> split(const std::string &str, char d)
