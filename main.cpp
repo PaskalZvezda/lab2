@@ -5,8 +5,9 @@
 #include <algorithm>
 #include <fstream>
 #include "ip_filter.h"
+#ifdef _WIN32
 #include <windows.h>
-
+#endif
 
 void print_ip(const std::vector<int>& ip) {
     for (size_t i = 0; i < ip.size(); ++i) {
