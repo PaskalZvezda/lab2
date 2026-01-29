@@ -6,7 +6,6 @@
 #include <fstream>
 #include <algorithm>
 
-// Выносим split сюда, чтобы она была видна и main.cpp, и тестам
 std::vector<std::string> split(const std::string &str, char d)
 {
     std::vector<std::string> r;
