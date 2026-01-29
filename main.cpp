@@ -5,9 +5,8 @@
 #include <algorithm>
 #include <fstream>
 #include "ip_filter.h"
-#ifdef _WIN32
 #include <windows.h>
-#endif
+
 
 void print_ip(const std::vector<int>& ip) {
     for (size_t i = 0; i < ip.size(); ++i) {
@@ -22,17 +21,7 @@ int main()
         SetConsoleCP(65001);
         SetConsoleOutputCP(65001);
     #endif
-
-    // 1. Открываем файл ip_filter.tsv
     std::ifstream file("C:/Users/Admin/Documents/Lab2/ip_filter.tsv");
-
-    // Проверка: удалось ли найти и открыть файл
-    if (!file.is_open()) {
-        std::cerr << "Ошибка: Не удалось открыть файл 'ip_filter.tsv'." << std::endl;
-        std::cerr << "Убедитесь, что файл находится в той же папке, что и исполняемый файл или проект." << std::endl;
-        return 1;
-    }
-
     std::vector<std::vector<int>> ip_pool;
     std::string line;
 
